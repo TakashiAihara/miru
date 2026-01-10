@@ -153,6 +153,7 @@ cython_debug/
 .vscode
 .idea
 *.swp
+.trunk
 
 # Project-specific
 # Database files (may contain file paths/metadata)
