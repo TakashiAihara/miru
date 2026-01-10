@@ -153,3 +153,17 @@ cython_debug/
 .vscode
 .idea
 *.swp
+
+# Project-specific
+# Database files (may contain file paths/metadata)
+*.db
+*.db-journal
+
+# Generated data
+data/
+!data/.gitkeep
+
+# Temporary files
+*.tmp
+temp/
+
