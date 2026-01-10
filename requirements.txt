@@ -1,0 +1,8 @@
+boto3
+ffmpeg-python
+imagehash
+numpy
+tqdm
+python-dotenv
+pillow
+scipy
