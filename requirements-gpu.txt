@@ -1,0 +1,22 @@
+# GPU環境用 (Paperspace A100)
+# Phase 2: CLIP処理で使用
+
+# PyTorch (CUDA 11.8+)
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Transformers (CLIP)
+transformers>=4.30.0
+
+# Vector Database
+qdrant-client>=1.7.0
+
+# 既存の依存関係も含める
+boto3
+ffmpeg-python
+imagehash
+numpy
+tqdm
+python-dotenv
+pillow
+scipy

@@ -90,9 +90,22 @@ python scripts/test_connection.py
 
 ### 2. 動画のインデックス化
 
+#### シングルプロセス版 (テスト用)
+
 ```bash
 python scripts/run_indexer.py
 ```
+
+#### 並列処理版 (本番用・推奨)
+
+```bash
+# 全CPUコアを使用して高速処理
+python scripts/run_parallel_indexer.py
+```
+
+**処理時間の目安**:
+- シングルプロセス: 30,000件 → 約33時間
+- 並列処理 (16コア): 30,000件 → 約8時間
 
 これにより:
 1. S3バケット内の全動画をスキャン
