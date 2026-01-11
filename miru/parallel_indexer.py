@@ -7,7 +7,7 @@ import logging
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import multiprocessing
 from .storage import Database
-from .fingerprint import generate_fingerprints
+from .fingerprint import generate_fingerprints_adaptive
 
 # Configuration
 FINGERPRINT_DIR = "data/fingerprints"
@@ -158,8 +158,11 @@ def _process_video_worker(video, bucket_name, endpoint_url, access_key, secret_k
         s3.download_file(bucket_name, key, local_path)
         logger.debug(f"[Worker {os.getpid()}] Downloaded: {local_path}")
         
-        # フィンガープリント生成
-        timestamps, hashes = generate_fingerprints(local_path, fps=1.0, max_duration=30.0)
+        # フィンガープリント生成 (適応的サンプリング)
+        timestamps, hashes = generate_fingerprints_adaptive(
+            local_path,
+            target_frames=150  # 約150フレームを目標
+        )
         
         if len(hashes) == 0:
             logger.warning(f"[Worker {os.getpid()}] No hashes generated for {key}")

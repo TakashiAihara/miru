@@ -5,7 +5,7 @@ from datetime import datetime
 from tqdm import tqdm
 import logging
 from .storage import Database
-from .fingerprint import generate_fingerprints
+from .fingerprint import generate_fingerprints_adaptive
 
 # Configuration
 FINGERPRINT_DIR = "data/fingerprints"
@@ -100,11 +100,13 @@ class Indexer:
             logger.error(f"Failed to download {key}: {e}")
             return
         
-        # 2. Generate Fingerprints from local file
+        # 2. Generate Fingerprints from local file (適応的サンプリング)
         # Use defaults: fps=1.0, hash_size=8
-        # For testing, limit to first 30 seconds
         logger.info(f"Generating fingerprints for {key}...")
-        timestamps, hashes = generate_fingerprints(local_path, fps=1.0, max_duration=30.0)
+        timestamps, hashes = generate_fingerprints_adaptive(
+            local_path,
+            target_frames=150
+        )
         logger.info(f"Generated {len(hashes)} hashes for {key}")
         
         # Clean up temp file

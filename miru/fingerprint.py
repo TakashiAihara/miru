@@ -139,3 +139,48 @@ def generate_fingerprints(
     logger.info(f"FFmpeg processing complete. Generated {len(hashes)} frames.")
     
     return np.array(timestamps, dtype=np.float32), np.array(hashes, dtype=np.uint64)
+
+
+def generate_fingerprints_adaptive(
+    file_path: str,
+    target_frames: int = 150,
+    min_fps: float = 0.05,
+    max_fps: float = 1.0,
+    hash_size: int = 8
+) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    動画の長さに応じて適応的にサンプリング
+    
+    短い動画: 高密度サンプリング (1fps)
+    長い動画: 低密度サンプリング (0.05fps = 20秒に1回)
+    
+    Args:
+        file_path: 動画ファイルパス
+        target_frames: 目標フレーム数 (デフォルト: 150)
+        min_fps: 最小サンプリングレート (デフォルト: 0.05 = 20秒に1回)
+        max_fps: 最大サンプリングレート (デフォルト: 1.0 = 1秒に1回)
+        hash_size: ハッシュサイズ
+    
+    Returns:
+        Tuple of (timestamps, hashes)
+    
+    Examples:
+        1分動画 (60秒): fps=1.0 → 60フレーム
+        10分動画 (600秒): fps=0.25 → 150フレーム
+        30分動画 (1800秒): fps=0.083 → 150フレーム
+    """
+    # 動画の長さを取得
+    duration = get_video_duration(file_path)
+    
+    if duration <= 0:
+        logger.warning(f"Could not determine duration for {file_path}, using max_fps")
+        fps = max_fps
+    else:
+        # fpsを計算: target_frames / duration
+        # ただし min_fps と max_fps の範囲内に制限
+        fps = min(max_fps, max(min_fps, target_frames / duration))
+    
+    logger.info(f"Adaptive sampling: duration={duration:.1f}s, fps={fps:.3f}, expected_frames={int(duration * fps)}")
+    
+    # max_duration は使わず、全体を処理
+    return generate_fingerprints(file_path, fps=fps, max_duration=None, hash_size=hash_size)
